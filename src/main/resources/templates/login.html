@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Sistema de Delivery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            flex-direction: column; /* Para centralizar o form */
+        }
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-sizing: border-box; /* Inclui padding na largura */
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+        .login-logo {
+            max-width: 150px; /* Tamanho da sua logo */
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #ff5722; /* Cor primária ao focar */
+            box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.2);
+        }
+        button {
+            background-color: #ff5722; /* Cor primária */
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #e64a19; /* Tom mais escuro ao hover */
+            transform: translateY(-2px);
+        }
+        .error-message {
+            color: #dc3545; /* Vermelho para mensagens de erro */
+            margin-top: 15px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        .register-link {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .register-link a {
+            color: #007bff; /* Azul para links */
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 500px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <img th:src="@{/images/meu_logo.png}" alt="Logo do Sistema" class="login-logo">
+    <h1>Entrar</h1>
+
+    <div th:if="${param.error}" class="error-message">
+        Usuário ou senha inválidos.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" required autocomplete="email">
+
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" required autocomplete="current-password">
+
+        <button type="submit">Entrar</button>
+    </form>
+
+    <p class="register-link">
+        Não tem uma conta? <a href="/registrar">Cadastre-se aqui</a>
+    </p>
+</div>
+</body>
+</html>

@@ -1,0 +1,139 @@
+
+/* Variáveis CSS globais */
+:root {
+    --primary-color: #ff5722;
+    --secondary-color: #333;
+    --background-color: #f0f2f5;
+    --card-background: #ffffff;
+    --text-color: #444;
+    --light-text-color: #777;
+    --border-color: #eee;
+    --shadow-light: 0 5px 15px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
+    --add-to-cart-color: #28a745; /* Verde para adicionar ao carrinho */
+    --add-to-cart-hover-color: #218838;
+}
+
+/* Estilos de corpo e layout geral */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--card-background);
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+    flex-grow: 1; /* Permite que o container se expanda */
+}
+
+h1 {
+    color: var(--secondary-color);
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+/* Estilos para a barra de navegação inferior (bottom-nav) */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: var(--card-background);
+    padding: 10px 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--light-text-color);
+    font-size: 0.75em;
+    font-weight: 600;
+    position: relative; /* Necessário para posicionar o contador */
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.nav-item.active {
+    color: var(--primary-color);
+}
+
+.nav-item:hover {
+    color: var(--primary-color);
+}
+
+.nav-item img {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+}
+
+/* Estilo para o contador do carrinho */
+.cart-counter {
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 0.7em;
+    font-weight: 700;
+    border-radius: 50%;
+    padding: 2px 6px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(25%, -25%);
+    min-width: 18px; /* Garante que o círculo seja visível mesmo com um dígito */
+    text-align: center;
+    box-sizing: border-box; /* Inclui padding na largura/altura */
+}
+
+/* Mensagens flash (alertas) */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+/* Estilos de botões gerais */
+.button { /* Usado em confirmacao-pedido.html, pode ser generalizado */
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    border: none; /* Garante que não tenha borda padrão de botões */
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #e64a19;
+}

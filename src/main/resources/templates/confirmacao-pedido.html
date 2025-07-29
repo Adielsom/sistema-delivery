@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmação de Pedido</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #ff5722;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #444;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .success-message {
+            color: #28a745; /* Cor verde para sucesso */
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .error-message {
+            color: #dc3545; /* Cor vermelha para erro */
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #ff5722;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #e64a19;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${mensagemSucesso} ? 'Pedido Realizado com Sucesso!' : 'Ocorreu um Erro no Pedido'">Confirmação de Pedido</h1>
+
+    <p th:if="${mensagemSucesso}" class="success-message" th:text="${mensagemSucesso}">Seu pedido foi processado e será entregue em breve.</p>
+    <p th:if="${mensagemErro}" class="error-message" th:text="${mensagemErro}">Houve um problema ao finalizar seu pedido. Por favor, tente novamente.</p>
+
+    <p>Agradecemos a sua preferência!</p>
+
+    <a th:href="@{/restaurantes}" class="button">Voltar para Restaurantes</a>
+</div>
+</body>
+</html>

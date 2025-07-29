@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Cardápio - ' + ${restaurante.nome}">Cardápio do Restaurante</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 900px; /* Largura um pouco menor para o cardápio */
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            overflow: hidden; /* Para garantir que as bordas arredondadas funcionem */
+        }
+
+        .header-top {
+            background-color: #17a2b8; /* Cor primária para o topo */
+            color: white;
+            padding: 15px 20px;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-section {
+            padding: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef); /* Gradiente suave */
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .restaurante-title {
+            color: #343a40;
+            margin-bottom: 5px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .restaurante-endereco {
+            color: #6c757d;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #495057;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background-color: #ff7f50; /* Cor secundária */
+            margin: 10px auto 0;
+            border-radius: 5px;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            margin: 20px;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .content-scroll {
+            padding: 20px;
+            max-height: calc(100vh - 250px); /* Ajusta a altura máxima para scroll */
+            overflow-y: auto; /* Permite rolagem dentro desta área */
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer; /* Indica que é clicável */
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+
+        .product-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-info h3 {
+            color: #343a40;
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .product-info p {
+            color: #28a745; /* Cor verde para o preço */
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .add-product-button {
+            display: block;
+            width: fit-content;
+            margin: 25px auto;
+            padding: 12px 25px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+        .add-product-button:hover {
+            background-color: #218838;
+        }
+
+        .back-to-restaurants-button {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        .back-to-restaurants-button:hover {
+            background-color: #5a6268;
+        }
+
+
+        /* Rodapé de navegação */
+        .bottom-nav {
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            bottom: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #888;
+            font-size: 12px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: #17a2b8; /* Cor primária para item ativo */
+        }
+
+        .nav-item:hover {
+            color: #17a2b8;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* Ícones como background-image (melhor para ícones simples) */
+        .icon-home { background-image: url('/images/home.png'); }
+        .icon-search { background-image: url('/images/busca.png'); }
+        .icon-cart { background-image: url('/images/carrinho.png'); }
+        .icon-user { background-image: url('/images/usuario.png'); }
+
+        @media (max-width: 600px) {
+            .main-container {
+                margin-top: 0;
+                margin-bottom: 0;
+                border-radius: 0;
+            }
+            .content-scroll {
+                max-height: calc(100vh - 200px); /* Ajusta para telas menores */
+            }
+            .products-grid {
+                grid-template-columns: 1fr; /* Uma coluna em telas muito pequenas */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header-top">
+        SISTEMA DELIVERY
+    </div>
+
+    <div class="hero-section">
+        <h1 class="restaurante-title" th:text="${restaurante.nome}">Nome do Restaurante</h1>
+        <p class="restaurante-endereco" th:text="${restaurante.endereco}">Endereço do Restaurante</p>
+        <div class="section-title">Cardápio</div>
+    </div>
+
+    <div th:if="${mensagem}" class="success-message">
+        <p th:text="${mensagem}"></p>
+    </div>
+
+    <div class="content-scroll">
+        <div th:if="${produtos != null and not #lists.isEmpty(produtos)}" class="products-grid">
+            <div th:each="produto : ${produtos}" class="product-card">
+                <img th:src="${produto.imageUrl != null and produto.imageUrl != '' ? produto.imageUrl : '/images/placeholder_produto.png'}" alt="Imagem do Produto">
+                <div class="product-info">
+                    <h3 th:text="${produto.nome}">Nome do Produto</h3>
+                    <p>R$ <span th:text="${#numbers.formatDecimal(produto.preco, 1, 2, 'COMMA')}">XX.XX</span></p>
+                </div>
+            </div>
+        </div>
+        <div th:if="${produtos == null or #lists.isEmpty(produtos)}" class="no-results-message">
+            <p>Nenhum produto cadastrado para este restaurante.</p>
+        </div>
+
+        <a th:href="@{/restaurantes/{restauranteId}/produtos/novo(restauranteId=${restaurante.id})}" class="add-product-button">
+            Cadastrar Novo Produto
+        </a>
+
+        <a href="/restaurantes" class="back-to-restaurants-button">Voltar para Restaurantes</a>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="/" class="nav-item active">
+            <span class="icon icon-home"></span>
+            <span>Início</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="icon icon-search"></span>
+            <span>Buscar</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="icon icon-cart"></span>
+            <span>Carrinho</span>
+        </a>
+        <a href="/perfil/1" class="nav-item">
+            <span class="icon icon-user"></span>
+            <span>Perfil</span>
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

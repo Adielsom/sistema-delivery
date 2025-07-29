@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Carrinho</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        /* Seus estilos CSS gerais */
+        :root {
+            --primary-color: #ff5722;
+            --secondary-color: #333;
+            --background-color: #f0f2f5;
+            --card-background: #ffffff;
+            --text-color: #444;
+            --light-text-color: #777;
+            --border-color: #eee;
+            --shadow-light: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Garante que o body ocupe a altura total da viewport */
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto 80px auto; /* Aumenta margem inferior para não cobrir pela nav */
+            padding: 20px;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: var(--shadow-light);
+            flex-grow: 1; /* Faz o container crescer e empurrar o rodapé para baixo */
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            flex-grow: 1;
+            margin-left: 15px;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .item-details {
+            font-size: 0.9em;
+            color: var(--light-text-color);
+        }
+
+        .item-price {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-left: 10px;
+        }
+
+        .item-quantity-controls {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .quantity-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background-color: #e64a19; /* Um tom mais escuro */
+        }
+
+        .item-quantity {
+            margin: 0 10px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .remove-item-form {
+            margin-left: 20px;
+        }
+
+        .remove-item-button {
+            background: none;
+            border: none;
+            color: #ff0000;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .remove-item-button:hover {
+            color: #cc0000;
+        }
+
+        .empty-cart-message {
+            text-align: center;
+            color: var(--light-text-color);
+            padding: 50px;
+            font-size: 1.1em;
+        }
+
+        .cart-summary {
+            text-align: right;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .cart-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Alinha verticalmente os itens */
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap; /* Permite que os itens quebrem a linha em telas pequenas */
+            gap: 15px; /* Espaçamento entre os itens */
+        }
+
+        .clear-cart-button, .checkout-button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            white-space: nowrap; /* Evita que o texto quebre */
+        }
+
+        .clear-cart-button {
+            background-color: #f44336; /* Vermelho para limpar */
+            color: white;
+        }
+
+        .clear-cart-button:hover {
+            background-color: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .checkout-button {
+            background-color: var(--primary-color);
+            color: white;
+            flex-grow: 1; /* Faz o botão de checkout ocupar o espaço restante */
+            max-width: 250px; /* Limita o tamanho máximo */
+        }
+
+        .checkout-button:hover {
+            background-color: #e64a19;
+            transform: translateY(-2px);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #e64a19;
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: var(--card-background);
+            box-shadow: var(--shadow-light);
+            z-index: 1000;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--light-text-color);
+            font-size: 0.8em;
+            transition: color 0.3s ease;
+            position: relative;
+            padding: 5px;
+            flex: 1; /* Garante que os itens ocupem o espaço igualmente */
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-item:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-item .icon-img {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 3px;
+        }
+
+        .cart-counter {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.7em;
+            font-weight: 700;
+            border-radius: 50%;
+            padding: 2px 6px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .message-container {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .message-container.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message-container.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Estilos para o popup de método de pagamento */
+        .payment-popup {
+            display: none; /* Escondido por padrão */
+            position: fixed;
+            z-index: 2000; /* Acima de todo o resto */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5); /* Fundo escuro semi-transparente */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .payment-popup-content {
+            background-color: var(--card-background);
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-light);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .payment-option {
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+        }
+
+        .payment-option:hover {
+            background-color: #f5f5f5;
+            border-color: var(--primary-color);
+        }
+
+        .payment-option input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.2); /* Aumenta o tamanho do radio button */
+            accent-color: var(--primary-color); /* Altera a cor do radio button */
+        }
+
+        .confirm-payment-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .confirm-payment-button:hover {
+            background-color: #e64a19;
+            transform: translateY(-2px);
+        }
+
+        /* Estilos responsivos */
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px auto 70px auto;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-info {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .item-quantity-controls, .remove-item-form {
+                margin-top: 10px;
+                margin-left: 0;
+            }
+
+            .cart-summary {
+                font-size: 1.1em;
+            }
+
+            .cart-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .clear-cart-button, .checkout-button {
+                width: 100%;
+                max-width: none;
+            }
+
+            .bottom-nav {
+                height: 55px;
+            }
+
+            .nav-item {
+                font-size: 0.75em;
+            }
+
+            .nav-item .icon-img {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Meu Carrinho</h1>
+
+    <div th:if="${mensagem}" class="message-container success">
+        <span th:text="${mensagem}"></span>
+    </div>
+    <div th:if="${erro}" class="message-container error">
+        <span th:text="${erro}"></span>
+    </div>
+
+    <div th:if="${carrinhoItens != null and not #lists.isEmpty(carrinhoItens)}">
+        <div th:each="item : ${carrinhoItens}" class="cart-item">
+            <div class="item-info">
+                <div class="item-name" th:text="${item.nomeProduto}">Nome do Produto</div>
+                <div class="item-details">
+                    Preço: R$ <span th:text="${#numbers.formatDecimal(item.precoUnitario, 0, 'COMMA', 2, 'POINT')}">10.00</span>
+                </div>
+            </div>
+            <div class="item-quantity-controls">
+                <form th:action="@{/carrinho/adicionar}" method="post" style="display:inline-block;">
+                    <input type="hidden" name="produtoId" th:value="${item.produtoId}"/>
+                    <input type="hidden" name="quantidade" value="-1"/> <button type="submit" class="quantity-btn">-</button>
+                </form>
+                <span class="item-quantity" th:text="${item.quantidade}">1</span>
+                <form th:action="@{/carrinho/adicionar}" method="post" style="display:inline-block;">
+                    <input type="hidden" name="produtoId" th:value="${item.produtoId}"/>
+                    <input type="hidden" name="quantidade" value="1"/> <button type="submit" class="quantity-btn">+</button>
+                </form>
+            </div>
+            <div class="item-price">
+                R$ <span th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 2, 'POINT')}">10.00</span>
+            </div>
+            <form th:action="@{/carrinho/remover}" method="post" class="remove-item-form">
+                <input type="hidden" name="produtoId" th:value="${item.produtoId}"/>
+                <button type="submit" class="remove-item-button">&times;</button>
+            </form>
+        </div>
+
+        <div th:unless="${carrinhoItens != null and not #lists.isEmpty(carrinhoItens)}" class="empty-cart-message">
+            <p>Seu carrinho está vazio.</p>
+            <a href="/restaurantes" class="back-link">Comece a comprar!</a>
+        </div>
+    </div>
+
+    <div th:if="${carrinhoItens != null and not #lists.isEmpty(carrinhoItens)}" class="cart-summary">
+        Total do Carrinho: R$ <span th:text="${#numbers.formatDecimal(valorTotal, 0, 'COMMA', 2, 'POINT')}" id="cartTotalDisplay">0.00</span>
+    </div>
+
+    <div th:if="${carrinhoItens != null and not #lists.isEmpty(carrinhoItens)}" class="cart-actions">
+        <form th:action="@{/carrinho/limpar}" method="post">
+            <button type="submit" class="clear-cart-button">Limpar Carrinho</button>
+        </form>
+        <form th:action="@{/finalizar-pedido}" method="post">
+            <button type="submit" class="checkout-button">Finalizar Pedido</button>
+        </form>
+    </div>
+    <a href="/restaurantes" class="back-link">Continuar Comprando</a>
+</div>
+
+<div id="paymentPopup" class="payment-popup">
+    <div class="payment-popup-content">
+        <span class="close-button" id="closePaymentPopup">&times;</span>
+        <h2>Selecione o Método de Pagamento</h2>
+        <form th:action="@{/carrinho/finalizar}" method="post">
+            <label class="payment-option">
+                <input type="radio" name="metodoPagamento" value="Cartao de Credito" required> Cartão de Crédito
+            </label>
+            <label class="payment-option">
+                <input type="radio" name="metodoPagamento" value="Dinheiro" required> Dinheiro
+            </label>
+            <label class="payment-option">
+                <input type="radio" name="metodoPagamento" value="Pix" required> Pix
+            </label>
+            <button type="submit" class="confirm-payment-button">Confirmar Pedido</button>
+        </form>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <a href="/" class="nav-item">
+        <img th:src="@{/images/home.png}" alt="Início" class="icon-img">
+        <span>Início</span>
+    </a>
+    <a href="#" class="nav-item" id="searchNavItem">
+        <img th:src="@{/images/busca.png}" alt="Buscar" class="icon-img">
+        <span>Buscar</span>
+    </a>
+    <a href="/carrinho" class="nav-item active"> <img th:src="@{/images/carrinho.png}" alt="Carrinho" class="icon-img">
+        <span>Carrinho</span>
+        <span class="cart-counter" id="cartCounter" th:text="${totalItensCarrinho}">0</span>
+
+        <a href="/perfil" class="nav-item">
+            <img th:src="@{/images/perfil.png}" alt="Perfil" class="icon-img">
+            <span>Perfil</span>
+        </a>
+</div>
+
+
+<script>
+    // Script para o contador do carrinho e mensagens flash
+    document.addEventListener('DOMContentLoaded', function() {
+        const cartCounter = document.getElementById('cartCounter');
+        const updateCartCounter = () => {
+            fetch('/carrinho/totalItens')
+                .then(response => response.json())
+                .then(data => {
+                    cartCounter.textContent = data.totalItens;
+                })
+                .catch(error => console.error('Erro ao atualizar contador do carrinho:', error));
+        };
+
+        // Adiciona event listeners para os botões de adicionar/remover
+        document.querySelectorAll('.quantity-btn, .remove-item-button').forEach(button => {
+            button.closest('form').addEventListener('submit', function(event) {
+                event.preventDefault(); // Impede a submissão padrão do formulário
+                const form = this;
+                fetch(form.action, {
+                    method: form.method,
+                    body: new URLSearchParams(new FormData(form))
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Atualiza o contador do carrinho e recarrega a página ou atualiza via AJAX
+                        updateCartCounter();
+                        // Para atualizar a lista de itens e o total sem recarregar a página inteira
+                        window.location.reload(); // Simplificado, idealmente seria atualização AJAX
+                    } else {
+                        console.error('Erro na operação do carrinho');
+                    }
+                })
+                .catch(error => console.error('Erro de rede:', error));
+            });
+        });
+
+        // Lógica do Popup de Pagamento
+        const paymentPopup = document.getElementById('paymentPopup');
+        const openPaymentPopupButton = document.getElementById('openPaymentPopup');
+        const closePaymentPopupButton = document.getElementById('closePaymentPopup');
+
+        if (openPaymentPopupButton) {
+            openPaymentPopupButton.addEventListener('click', function() {
+                paymentPopup.style.display = 'flex'; // Exibe o popup
+            });
+        }
+
+        if (closePaymentPopupButton) {
+            closePaymentPopupButton.addEventListener('click', function() {
+                paymentPopup.style.display = 'none'; // Esconde o popup
+            });
+        }
+
+        // Esconder popup clicando fora
+        window.addEventListener('click', function(event) {
+            if (event.target === paymentPopup) {
+                paymentPopup.style.display = 'none';
+            }
+        });
+
+        // Exibir mensagens de sucesso/erro
+        const mensagemDiv = document.querySelector('.message-container.success');
+        const erroDiv = document.querySelector('.message-container.error');
+        if (mensagemDiv || erroDiv) {
+            setTimeout(() => {
+                if (mensagemDiv) mensagemDiv.style.display = 'none';
+                if (erroDiv) erroDiv.style.display = 'none';
+            }, 5000); // Esconde a mensagem após 5 segundos
+        }
+    });
+</script>
+</body>
+</html>

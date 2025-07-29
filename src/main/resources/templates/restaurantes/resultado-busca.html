@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados da Busca</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #17a2b8;
+            --secondary-color: #ff7f50;
+            --background-color: #e9ecef;
+            --card-background: #ffffff;
+            --text-dark: #343a40;
+            --text-light: #6c757d;
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            width: 100%;
+            padding: 10px 0;
+            background-color: transparent;
+            text-align: center;
+            z-index: 1000;
+            position: sticky;
+            top: 0;
+        }
+        .app-logo {
+            max-width: 250px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .layout-wrapper {
+            display: flex;
+            flex-direction: row;
+            flex-grow: 1;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .main-content-area {
+            flex-grow: 1;
+            padding: 20px;
+            padding-right: 100px; /* Espaço para a barra lateral */
+            background-color: transparent;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .search-bar-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 60%;
+            padding: 12px 20px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+
+        .restaurant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+
+        .restaurant-card {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--shadow-light);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px var(--shadow-medium);
+        }
+
+        .restaurant-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+
+        .restaurant-info {
+            padding: 18px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .restaurant-info h3 {
+            color: var(--text-dark);
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .restaurant-info p {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .restaurant-info .address {
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--text-dark);
+        }
+
+        .no-results-message {
+            text-align: center;
+            color: var(--text-dark);
+            font-size: 18px;
+            margin-top: 50px;
+        }
+
+        /* Estilos da barra lateral */
+        .right-sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 80px;
+            background-color: var(--card-background);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 20px 0;
+            box-shadow: -4px 0 10px var(--shadow-light);
+            z-index: 999;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 12px;
+            padding: 15px 5px;
+            transition: color 0.3s ease;
+            margin-top: 10px;
+        }
+        .nav-item:first-child {
+            margin-top: 0;
+        }
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+        .nav-item:hover {
+            color: var(--primary-color);
+        }
+        .nav-icon {
+            width: 28px;
+            height: 28px;
+            margin-bottom: 3px;
+        }
+
+        /* Estilos responsivos para telas menores */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .app-header {
+                position: relative;
+            }
+
+            .layout-wrapper {
+                flex-direction: column;
+            }
+
+            .main-content-area {
+                padding-right: 20px;
+                padding-bottom: 80px;
+            }
+
+            .search-input {
+                width: 90%;
+            }
+
+            .restaurant-grid {
+                padding: 10px;
+            }
+
+            .right-sidebar {
+                position: fixed;
+                top: auto;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 60px;
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+                padding: 0;
+                box-shadow: 0 -2px 10px var(--shadow-light);
+            }
+            .nav-item {
+                margin: 0;
+                padding: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="layout-wrapper">
+    <div class="main-content-area">
+        <h2 style="text-align: center; color: var(--text-dark); margin-bottom: 30px;">Resultados da Busca</h2>
+
+        <div class="search-bar-container">
+            <form action="/restaurantes/buscar" method="get" style="width: 100%; display: flex; justify-content: center;">
+                <input type="text" name="nome" placeholder="Buscar restaurantes..." class="search-input" th:value="${param.nome != null ? param.nome : ''}">
+            </form>
+        </div>
+
+        <div th:if="${restaurantes != null and not #lists.isEmpty(restaurantes)}" class="restaurant-grid">
+            <div class="restaurant-card" th:each="restaurante : ${restaurantes}">
+                <img th:src="${restaurante.imageUrl != null and restaurante.imageUrl != '' ? restaurante.imageUrl : '/images/restaurante_placeholder.png'}"
+                     alt="Imagem do Restaurante" class="restaurant-image">
+                <div class="restaurant-info">
+                    <h3 th:text="${restaurante.nome}">Nome do Restaurante</h3>
+                    <p class="address" th:text="${restaurante.endereco}">Endereço do Restaurante</p>
+                </div>
+            </div>
+        </div>
+        <div th:if="${restaurantes == null or #lists.isEmpty(restaurantes)}" class="no-results-message">
+            <p>Nenhum restaurante encontrado com o nome pesquisado.</p>
+            <p>Tente novamente ou <a href="/" style="color: var(--primary-color); text-decoration: none;">volte para a lista completa</a>.</p>
+        </div>
+    </div>
+
+    <div class="right-sidebar">
+        <a href="/" class="nav-item">
+            <img src="/images/home.png" alt="Início" class="nav-icon">
+            <span>Início</span>
+        </a>
+        <a href="/restaurantes/buscar" class="nav-item active">
+            <img src="/images/busca.png" alt="Buscar" class="nav-icon">
+            <span>Buscar</span>
+        </a>
+        <a href="#" class="nav-item">
+            <img src="/images/carrinho.png" alt="Carrinho" class="nav-icon">
+            <span>Carrinho</span>
+        </a>
+        <a href="/perfil/1" class="nav-item">
+            <img src="/images/usuario.png" alt="Perfil" class="nav-icon">
+            <span>Perfil</span>
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

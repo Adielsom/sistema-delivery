@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${produto.id == null ? 'Cadastrar Novo Produto' : 'Editar Produto'}">Cadastrar/Editar Produto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="url"],
+        textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #ff5722;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #e64a19;
+        }
+        .back-link {
+            display: block;
+            margin-top: 25px;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.2s ease;
+        }
+        .back-link:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h1 th:text="${produto.id == null ? 'Cadastrar Novo Produto' : 'Editar Produto'}"></h1>
+    <p th:if="${restaurante != null}">Para o restaurante: <strong th:text="${restaurante.nome}"></strong></p>
+
+    <form th:action="@{/produtos/salvar}" th:object="${produto}" method="post">
+        <input type="hidden" th:field="*{id}" />
+        <input type="hidden" th:field="*{restaurante.id}" th:value="${restaurante.id}" />
+
+        <label for="nome">Nome do Produto:</label>
+        <input type="text" id="nome" th:field="*{nome}" required />
+
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" th:field="*{descricao}" rows="3"></textarea>
+
+        <label for="preco">Preço:</label>
+        <input type="number" id="preco" th:field="*{preco}" step="0.01" required />
+
+        <label for="imageUrl">URL da Imagem:</label>
+        <input type="text" id="imageUrl" th:field="*{imageUrl}" placeholder="http://exemplo.com/imagem.png" />
+
+        <button type="submit" th:text="${produto.id == null ? 'Salvar Produto' : 'Atualizar Produto'}"></button>
+    </form>
+
+    <a th:href="@{/restaurantes/{restauranteId}/produtos(restauranteId=${restaurante.id})}" class="back-link">Voltar para o Cardápio</a>
+</div>
+</body>
+</html>
